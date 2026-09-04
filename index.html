@@ -27,13 +27,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <style>
-        @import url('https://docs.google.com/spreadsheets/d/e/2PACX-1vSPkhK0Bi8tvhrkwTC9RT3UXgS_WdFgLR2WBKADcFCQuqjwFIECC3LyfjsI-ijSuiQuylG-P82cblj2/pubhtml');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .light-panel {
             background: #ffffff;
             border: 1px solid #e2e8f0;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         }
+        /* Pemisah garis hitam tebal khusus untuk membedakan kelompok KK */
         .kk-group-separator {
             border-top: 3px solid #0f172a !important;
         }
@@ -45,73 +46,44 @@
 <body class="bg-lightBg text-slate-800 min-h-screen flex flex-col">
 
     <!-- Top Navbar -->
-    <header class="light-panel sticky top-0 z-50 px-4 py-3 flex flex-col sm:flex-row items-center justify-between border-b border-slate-200 gap-3">
-        <div class="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-start">
-            <div class="flex items-center space-x-3">
-                <div class="bg-gradient-to-tr from-indigo-600 to-violet-500 p-2.5 rounded-xl shadow-lg shadow-indigo-500/20">
-                    <i class="fa-solid fa-users-rectangle text-white text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-lg tracking-wide bg-gradient-to-r from-indigo-900 to-slate-700 bg-clip-text text-transparent">SIKAP DIGITAL</h1>
-                    <p class="text-xs text-slate-500 flex items-center gap-1.5">
-                        <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        Terhubung ke Google Spreadsheet (GitHub Pages Ready)
-                    </p>
-                </div>
+    <header class="light-panel sticky top-0 z-50 px-4 py-3 flex items-center justify-between border-b border-slate-200">
+        <div class="flex items-center space-x-3">
+            <div class="bg-gradient-to-tr from-indigo-600 to-violet-500 p-2.5 rounded-xl shadow-lg shadow-indigo-500/20">
+                <i class="fa-solid fa-users-rectangle text-white text-lg"></i>
             </div>
-            <!-- Mobile Config Trigger -->
-            <button onclick="openConfigModal()" class="sm:hidden bg-slate-100 hover:bg-slate-200 text-slate-700 p-2 rounded-xl text-xs border border-slate-300">
-                <i class="fa-solid fa-gear text-indigo-600"></i>
-            </button>
+            <div>
+                <h1 class="font-bold text-lg tracking-wide bg-gradient-to-r from-indigo-900 to-slate-700 bg-clip-text text-transparent">SIKAP DIGITAL</h1>
+                <p class="text-xs text-slate-500 flex items-center gap-1.5">
+                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Terhubung ke Google Spreadsheet (Tema Terang)
+                </p>
+            </div>
         </div>
 
         <!-- Controls & Actions -->
-        <div class="flex items-center flex-wrap gap-2 justify-end">
-            <button onclick="openConfigModal()" class="hidden sm:flex bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs font-semibold items-center space-x-1.5 border border-slate-300 transition">
-                <i class="fa-solid fa-gear text-indigo-600"></i>
-                <span>URL Apps Script</span>
-            </button>
-            <button onclick="loadDataFromSheet()" id="btnSync" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1.5 border border-slate-300 transition">
+        <div class="flex items-center space-x-3">
+            <button onclick="loadDataFromSheet()" id="btnSync" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1.5 border border-slate-300 transition">
                 <i class="fa-solid fa-rotate text-indigo-600"></i>
-                <span>Sinkronisasi</span>
+                <span class="hidden sm:inline">Sinkronisasi</span>
             </button>
             <button onclick="openAddModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1.5 shadow-lg shadow-indigo-600/20 transition">
                 <i class="fa-solid fa-plus"></i>
-                <span>Tambah Data</span>
+                <span class="hidden sm:inline">Tambah Data</span>
             </button>
             <div class="relative">
                 <button onclick="toggleExportMenu()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1.5 border border-slate-300 transition">
                     <i class="fa-solid fa-download"></i>
-                    <span>Unduh</span>
+                    <span class="hidden sm:inline">Unduh Data</span>
                     <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i>
                 </button>
-                <div id="exportMenu" class="hidden absolute right-0 mt-2 w-56 light-panel rounded-xl shadow-2xl py-1 z-50 border border-slate-200">
-                    <div class="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Ekspor Excel</div>
-                    <button onclick="exportExcel('all')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-100 flex items-center space-x-2">
-                        <i class="fa-solid fa-file-excel text-emerald-600"></i>
-                        <span>Semua Data (Multi-Sheet)</span>
+                <div id="exportMenu" class="hidden absolute right-0 mt-2 w-52 light-panel rounded-xl shadow-2xl py-1 z-50 border border-slate-200">
+                    <button onclick="exportExcel()" class="w-full text-left px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-100 flex items-center space-x-2">
+                        <i class="fa-solid fa-file-excel text-emerald-600 text-sm"></i>
+                        <span>Unduh Excel (Hasil Filter)</span>
                     </button>
-                    <button onclick="exportExcel('unique')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-100 flex items-center space-x-2">
-                        <i class="fa-solid fa-file-excel text-blue-600"></i>
-                        <span>Excel - NKK Unik Saja</span>
-                    </button>
-                    <button onclick="exportExcel('duplicate')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-100 flex items-center space-x-2">
-                        <i class="fa-solid fa-file-excel text-amber-600"></i>
-                        <span>Excel - NKK Duplikat Saja</span>
-                    </button>
-                    <div class="border-t border-slate-200 my-1"></div>
-                    <div class="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Ekspor PDF</div>
-                    <button onclick="exportPDF('all')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-100 flex items-center space-x-2">
-                        <i class="fa-solid fa-file-pdf text-rose-600"></i>
-                        <span>Semua Data (2 Kategori)</span>
-                    </button>
-                    <button onclick="exportPDF('unique')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-100 flex items-center space-x-2">
-                        <i class="fa-solid fa-file-pdf text-blue-600"></i>
-                        <span>PDF - NKK Unik Saja</span>
-                    </button>
-                    <button onclick="exportPDF('duplicate')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-100 flex items-center space-x-2">
-                        <i class="fa-solid fa-file-pdf text-amber-600"></i>
-                        <span>PDF - NKK Duplikat Saja</span>
+                    <button onclick="exportPDF()" class="w-full text-left px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-100 flex items-center space-x-2 border-t border-slate-100">
+                        <i class="fa-solid fa-file-pdf text-rose-600 text-sm"></i>
+                        <span>Unduh PDF (Hasil Filter)</span>
                     </button>
                 </div>
             </div>
@@ -224,31 +196,7 @@
         </div>
     </main>
 
-    <!-- Modal Konfigurasi URL Apps Script -->
-    <div id="configModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-        <div class="light-panel w-full max-w-md rounded-2xl p-6 shadow-2xl relative">
-            <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-3">
-                <h3 class="font-bold text-base text-slate-900 flex items-center space-x-2">
-                    <i class="fa-solid fa-link text-indigo-600"></i>
-                    <span>Pengaturan URL Google Apps Script</span>
-                </h3>
-                <button onclick="closeConfigModal()" class="text-slate-400 hover:text-slate-700 text-lg"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <p class="text-xs text-slate-500 mb-3">Masukkan URL Web App Google Apps Script Anda yang berakhiran <code class="bg-slate-100 px-1 py-0.5 rounded text-indigo-600">/exec</code> agar GitHub Pages bisa tersambung ke Spreadsheet.</p>
-            <div class="space-y-3 text-xs">
-                <div>
-                    <label class="block text-slate-600 mb-1 font-medium">URL Web App /exec</label>
-                    <input type="text" id="scriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-slate-50 text-slate-800 px-3 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-indigo-600">
-                </div>
-                <div class="flex justify-end space-x-2 pt-2">
-                    <button type="button" onclick="closeConfigModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl transition">Batal</button>
-                    <button type="button" onclick="saveScriptUrl()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition">Simpan URL</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Tambah / Edit Data -->
+    <!-- Modal Form (Tambah/Edit) -->
     <div id="addModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto">
         <div class="light-panel w-full max-w-2xl rounded-2xl p-6 shadow-2xl relative my-8">
             <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-3">
@@ -340,16 +288,33 @@
         </div>
     </div>
 
+    <!-- Modal Konfirmasi Hapus Data -->
+    <div id="deleteModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+        <div class="light-panel w-full max-w-md rounded-2xl p-5 shadow-2xl relative">
+            <div class="flex items-center space-x-3 text-rose-600 mb-3">
+                <div class="p-2.5 bg-rose-100 rounded-xl">
+                    <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+                </div>
+                <h3 class="font-bold text-base text-slate-900">Konfirmasi Hapus Data</h3>
+            </div>
+            <p id="deleteModalText" class="text-xs text-slate-600 mb-5 leading-relaxed">Apakah Anda yakin ingin menghapus data ini dari Google Spreadsheet?</p>
+            <div class="flex justify-end space-x-2">
+                <button onclick="closeDeleteModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-semibold transition">Batal</button>
+                <button id="btnConfirmDelete" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-rose-600/20 transition">Ya, Hapus Data</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Notification Toast -->
     <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 light-panel bg-indigo-900 text-white px-4 py-3 rounded-xl shadow-2xl border border-indigo-700 flex items-center space-x-2 text-xs">
         <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
         <span id="toastMsg">Berhasil melakukan sinkronisasi.</span>
     </div>
 
-    <!-- Skrip Integrasi Apps Script via Fetch (GitHub Pages Supported) -->
+    <!-- Skrip Integrasi Google Apps Script & Logika PDF -->
     <script>
         let masterData = [];
-        let DEFAULT_SCRIPT_URL = localStorage.getItem('sikap_script_url') || "";
+        let pendingDeleteNik = null;
 
         window.addEventListener('DOMContentLoaded', () => {
             const rtSelect = document.getElementById('rtFilter');
@@ -360,73 +325,42 @@
                 opt.textContent = `RT ${formattedRt}`;
                 rtSelect.appendChild(opt);
             }
-
-            if (!DEFAULT_SCRIPT_URL) {
-                // Tampilkan modal pengaturan jika URL belum diatur
-                openConfigModal();
-            } else {
-                loadDataFromSheet();
-            }
+            loadDataFromSheet();
         });
 
-        function openConfigModal() {
-            document.getElementById('scriptUrlInput').value = DEFAULT_SCRIPT_URL;
-            document.getElementById('configModal').classList.remove('hidden');
-        }
-
-        function closeConfigModal() {
-            document.getElementById('configModal').classList.add('hidden');
-        }
-
-        function saveScriptUrl() {
-            let url = document.getElementById('scriptUrlInput').value.trim();
-            if (!url) {
-                alert("URL tidak boleh kosong!");
-                return;
-            }
-            DEFAULT_SCRIPT_URL = url;
-            localStorage.setItem('sikap_script_url', url);
-            closeConfigModal();
-            showToast("URL Web App berhasil disimpan!");
-            loadDataFromSheet();
-        }
-
         function loadDataFromSheet() {
-            if (!DEFAULT_SCRIPT_URL) {
-                showToast("Harap atur URL Web App Apps Script terlebih dahulu.");
-                openConfigModal();
-                return;
-            }
-
             showToast("Mengambil data terbaru dari Google Spreadsheet...");
-            
-            // Menggunakan fetch GET ke Google Apps Script Web App
-            fetch(DEFAULT_SCRIPT_URL + "?action=getMasterData")
-                .then(res => res.json())
-                .then(data => {
-                    masterData = data || [];
-                    renderTable();
-                    showToast(`Berhasil memuat ${masterData.length} data penduduk!`);
-                })
-                .catch(err => {
-                    console.error(err);
-                    showToast("Gagal mengambil data. Pastikan akses Web App sudah 'Anyone'.");
-                    // Fallback Demo Data jika gagal terhubung
-                    masterData = [
-                        { dpId: "DP001", nkk: "3201011234560001", nik: "3201011234560001", nama: "Ahmad Fauzi (Demo Offline)", tempatLahir: "Bandung", tglLahir: "1990-05-12", usia: 36, stsKawin: "S", lp: "L", alamat: "Dusun Krajan I", rt: "01", tps: "TPS 1", ket: "Aktif", statusCode: "0" }
-                    ];
-                    renderTable();
-                });
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run
+                    .withSuccessHandler(onDataLoaded)
+                    .withFailureHandler(onDataError)
+                    .getMasterData();
+            } else {
+                console.warn("Google Apps Script env not detected. Using demo dataset.");
+                setTimeout(() => {
+                    onDataLoaded([
+                        { id: 1, dpId: "DP001", nkk: "3201011234560001", nik: "3201011234560001", nama: "Ahmad Fauzi (Demo KK 1)", tempatLahir: "Bandung", tglLahir: "1990-05-12", usia: 36, stsKawin: "S", lp: "L", alamat: "Dusun Krajan I", rt: "01", tps: "TPS 1", ket: "Aktif", statusCode: "0" },
+                        { id: 2, dpId: "DP002", nkk: "3201011234560001", nik: "3201011234560002", nama: "Siti Aminah (Demo KK 1)", tempatLahir: "Bandung", tglLahir: "1992-06-15", usia: 34, stsKawin: "S", lp: "P", alamat: "Dusun Krajan I", rt: "01", tps: "TPS 1", ket: "Aktif", statusCode: "0" },
+                        { id: 3, dpId: "DP003", nkk: "3201019999990002", nik: "3201019999990001", nama: "Budi Santoso (Demo KK Unik 2)", tempatLahir: "Jakarta", tglLahir: "1985-02-20", usia: 41, stsKawin: "S", lp: "L", alamat: "Dusun Sejahtera", rt: "02", tps: "TPS 2", ket: "Aktif", statusCode: "0" },
+                        { id: 4, dpId: "DP004", nkk: "3201018888880003", nik: "3201018888880001", nama: "Dewi Lestari (Demo KK Unik 3)", tempatLahir: "Surabaya", tglLahir: "1995-10-08", usia: 29, stsKawin: "B", lp: "P", alamat: "Dusun Krajan II", rt: "03", tps: "TPS 1", ket: "Aktif", statusCode: "0" }
+                    ]);
+                }, 500);
+            }
+        }
+
+        function onDataLoaded(data) {
+            masterData = data || [];
+            renderTable();
+            showToast(`Berhasil memuat ${masterData.length} data penduduk!`);
+        }
+
+        function onDataError(err) {
+            console.error(err);
+            showToast("Gagal mengambil data dari Google Spreadsheet.");
         }
 
         function submitNewData(e) {
             e.preventDefault();
-            if (!DEFAULT_SCRIPT_URL) {
-                alert("Atur URL Web App terlebih dahulu!");
-                openConfigModal();
-                return;
-            }
-
             const submitBtn = document.getElementById('btnSubmitForm');
             submitBtn.disabled = true;
             submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Menyimpan...`;
@@ -455,44 +389,70 @@
                 ket: statusMap[code] || 'Aktif'
             };
 
-            // Mengirim data via POST JSON ke Google Apps Script Web App
-            fetch(DEFAULT_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors', // Diperlukan untuk Apps Script doPost cross-origin
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'saveRecord', record: record })
-            })
-            .then(() => {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = "Simpan ke Spreadsheet";
-                closeAddModal();
-                showToast("Data berhasil dikirim ke Spreadsheet!");
-                setTimeout(loadDataFromSheet, 1500); // Sinkron ulang
-            })
-            .catch(err => {
-                console.error(err);
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = "Simpan ke Spreadsheet";
-                showToast("Terjadi kesalahan saat menyimpan.");
-            });
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run
+                    .withSuccessHandler((res) => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = "Simpan ke Spreadsheet";
+                        closeAddModal();
+                        showToast(res.message);
+                        loadDataFromSheet();
+                    })
+                    .withFailureHandler((err) => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = "Simpan ke Spreadsheet";
+                        showToast("Terjadi kesalahan saat menyimpan.");
+                    })
+                    .saveRecordToSheet(record);
+            } else {
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = "Simpan ke Spreadsheet";
+                    closeAddModal();
+                    
+                    let existingIdx = masterData.findIndex(d => d.nik === record.nik);
+                    if (existingIdx >= 0) {
+                        masterData[existingIdx] = record;
+                    } else {
+                        masterData.push(record);
+                    }
+                    
+                    renderTable();
+                    showToast("Simpan simulasi berhasil!");
+                }, 500);
+            }
         }
 
         function deleteData(nik, nama) {
-            if (confirm(`Apakah Anda yakin ingin menghapus data atas nama ${nama} (NIK: ${nik}) dari Spreadsheet?`)) {
-                if (!DEFAULT_SCRIPT_URL) return;
-                showToast("Menghapus data...");
+            pendingDeleteNik = nik;
+            document.getElementById('deleteModalText').innerText = `Apakah Anda yakin ingin menghapus data atas nama "${nama}" (NIK: ${nik}) dari Spreadsheet?`;
+            document.getElementById('btnConfirmDelete').onclick = executeDelete;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
 
-                fetch(DEFAULT_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'deleteRecord', nik: nik })
-                })
-                .then(() => {
-                    showToast("Perintah hapus terkirim.");
-                    setTimeout(loadDataFromSheet, 1500);
-                })
-                .catch(() => showToast("Gagal menghapus data."));
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+            pendingDeleteNik = null;
+        }
+
+        function executeDelete() {
+            if (!pendingDeleteNik) return;
+            const nik = pendingDeleteNik;
+            closeDeleteModal();
+            showToast("Menghapus data...");
+
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run
+                    .withSuccessHandler((res) => {
+                        showToast(res.message);
+                        loadDataFromSheet();
+                    })
+                    .withFailureHandler(() => showToast("Gagal menghapus data."))
+                    .deleteRecordFromSheet(nik);
+            } else {
+                masterData = masterData.filter(d => d.nik !== nik);
+                renderTable();
+                showToast("Data simulasi dihapus.");
             }
         }
 
@@ -514,7 +474,7 @@
             document.getElementById('addAlamat').value = item.alamat;
             document.getElementById('addRt').value = item.rt;
             document.getElementById('addTps').value = item.tps;
-            document.getElementById('addStatusCode').value = 'U';
+            document.getElementById('addStatusCode').value = item.statusCode || 'U';
 
             document.getElementById('addModal').classList.remove('hidden');
         }
@@ -568,14 +528,13 @@
             document.getElementById('statTps2').innerText = countTps2;
         }
 
-        function renderTable() {
-            updateStats();
-            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
-            const rtQuery = document.getElementById('rtFilter').value.trim();
-            const tpsQuery = document.getElementById('tpsFilter').value.toLowerCase();
-            const ketQuery = document.getElementById('ketFilter').value;
+        function getFilteredData() {
+            const searchQuery = (document.getElementById('searchInput')?.value || '').toLowerCase();
+            const rtQuery = (document.getElementById('rtFilter')?.value || '').trim();
+            const tpsQuery = (document.getElementById('tpsFilter')?.value || '').toLowerCase();
+            const ketQuery = document.getElementById('ketFilter')?.value || '';
 
-            let filtered = masterData.filter(item => {
+            return masterData.filter(item => {
                 let matchSearch = (item.nama + "").toLowerCase().includes(searchQuery) ||
                                   (item.nkk + "").toLowerCase().includes(searchQuery) ||
                                   (item.nik + "").toLowerCase().includes(searchQuery) ||
@@ -603,6 +562,11 @@
                 let matchKet = ketQuery === "" || (item.ket + "").toLowerCase() === ketQuery.toLowerCase();
                 return matchSearch && matchRt && matchTps && matchKet;
             });
+        }
+
+        function renderTable() {
+            updateStats();
+            let filtered = getFilteredData();
 
             filtered.sort((a, b) => String(a.nkk).localeCompare(String(b.nkk)));
 
@@ -682,84 +646,214 @@
             document.getElementById('exportMenu').classList.toggle('hidden');
         }
 
-        function getSplitData() {
-            let nkkCounts = {};
-            masterData.forEach(i => nkkCounts[i.nkk] = (nkkCounts[i.nkk] || 0) + 1);
+        function exportExcel() {
+            toggleExportMenu();
+            let filteredData = getFilteredData();
+            
+            if (filteredData.length === 0) {
+                showToast("Tidak ada data hasil filter untuk diekspor!");
+                return;
+            }
 
-            let uniqueList = [];
-            let duplicateList = [];
+            // Memformat baris data hasil filter untuk file Excel
+            let exportRows = filteredData.map((item, idx) => ({
+                "NO": idx + 1,
+                "DP-ID": item.dpId || '',
+                "NKK": item.nkk || '',
+                "NIK": item.nik || '',
+                "NAMA LENGKAP": item.nama || '',
+                "TEMPAT LAHIR": item.tempatLahir || '',
+                "TANGGAL LAHIR": item.tglLahir || '',
+                "USIA": item.usia || 0,
+                "STATUS KAWIN": item.stsKawin || '',
+                "L/P": item.lp || '',
+                "DUSUN/ALAMAT": item.alamat || '',
+                "RT": item.rt || '',
+                "TPS": item.tps || '',
+                "KODE": item.statusCode || '',
+                "KETERANGAN": item.ket || ''
+            }));
 
-            masterData.forEach(item => {
-                if (nkkCounts[item.nkk] > 1) {
-                    duplicateList.push(item);
-                } else {
-                    uniqueList.push(item);
+            let workbook = XLSX.utils.book_new();
+            let worksheet = XLSX.utils.json_to_sheet(exportRows);
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Data Terfilter");
+
+            XLSX.writeFile(workbook, "Data_Kependudukan_Filtered.xlsx");
+            showToast("Berhasil mengunduh Excel berdasarkan hasil filter!");
+        }
+
+        function exportPDF() {
+            toggleExportMenu();
+
+            if (typeof window.jspdf === 'undefined') {
+                showToast("Modul jsPDF belum siap. Silakan coba beberapa saat lagi.");
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            let doc = new jsPDF('landscape', 'pt', 'a4'); // A4 Landscape
+
+            let activeFilteredData = getFilteredData();
+            if (activeFilteredData.length === 0) {
+                showToast("Tidak ada data hasil filter untuk diekspor ke PDF!");
+                return;
+            }
+
+            // Urutkan berdasarkan NKK sebelum diekspor
+            activeFilteredData.sort((a, b) => String(a.nkk).localeCompare(String(b.nkk)));
+
+            // Menyusun ringkasan filter aktif pada header PDF
+            let rtVal = document.getElementById('rtFilter').value;
+            let tpsVal = document.getElementById('tpsFilter').value;
+            let ketVal = document.getElementById('ketFilter').value;
+            let filterDesc = [];
+            if (rtVal) filterDesc.push(`RT ${rtVal}`);
+            if (tpsVal) filterDesc.push(`${tpsVal}`);
+            if (ketVal) filterDesc.push(`Status: ${ketVal}`);
+            let filterStr = filterDesc.length > 0 ? filterDesc.join(' | ') : 'Semua Data (Tanpa Filter Filter Tambahan)';
+
+            const printDate = new Date().toLocaleDateString('id-ID', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+
+            // Banner Header PDF
+            doc.setFillColor(79, 70, 229); // Color: Indigo 600
+            doc.rect(30, 20, 782, 42, 'F');
+
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(13);
+            doc.setFont('helvetica', 'bold');
+            doc.text("SIKAP DIGITAL - LAPORAN KEPENDUDUKAN", 45, 38);
+
+            doc.setFontSize(8.5);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Hasil Filter: ${filterStr} | Total: ${activeFilteredData.length} Warga`, 45, 52);
+
+            // Sub-header Info Filter & Tanggal
+            doc.setTextColor(51, 65, 85);
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'bold');
+            doc.text(`Tanggal Cetak: ${printDate}`, 30, 76);
+
+            // Kolom tabel PDF
+            const pdfColumns = [
+                { header: 'NO', dataKey: 'no' },
+                { header: 'DP-ID', dataKey: 'dpId' },
+                { header: 'NKK', dataKey: 'nkk' },
+                { header: 'NIK', dataKey: 'nik' },
+                { header: 'NAMA LENGKAP', dataKey: 'nama' },
+                { header: 'TMP LAHIR', dataKey: 'tempatLahir' },
+                { header: 'TGL LAHIR', dataKey: 'tglLahir' },
+                { header: 'USIA', dataKey: 'usia' },
+                { header: 'STS', dataKey: 'stsKawin' },
+                { header: 'L/P', dataKey: 'lp' },
+                { header: 'ALAMAT / DUSUN', dataKey: 'alamat' },
+                { header: 'RT', dataKey: 'rt' },
+                { header: 'TPS', dataKey: 'tps' },
+                { header: 'KETERANGAN', dataKey: 'ket' }
+            ];
+
+            let formattedRows = [];
+            let lastNkk = null;
+            let displayIdx = 1;
+
+            activeFilteredData.forEach((item) => {
+                if (lastNkk !== null && lastNkk !== item.nkk) {
+                    // Menyisipkan baris kosong sebagai pemisah antar KK
+                    formattedRows.push({
+                        no: '', dpId: '', nkk: '', nik: '', nama: '', tempatLahir: '', tglLahir: '', usia: '', stsKawin: '', lp: '', alamat: '', rt: '', tps: '', ket: '', isSeparator: true
+                    });
+                }
+                
+                formattedRows.push({
+                    no: displayIdx++,
+                    dpId: item.dpId || '-',
+                    nkk: item.nkk || '-',
+                    nik: item.nik || '-',
+                    nama: item.nama || '-',
+                    tempatLahir: item.tempatLahir || '-',
+                    tglLahir: item.tglLahir || '-',
+                    usia: item.usia !== undefined ? String(item.usia) : '-',
+                    stsKawin: item.stsKawin || '-',
+                    lp: item.lp || '-',
+                    alamat: item.alamat || '-',
+                    rt: `RT ${item.rt}`,
+                    tps: item.tps || '-',
+                    ket: `[${item.statusCode}] ${item.ket}`,
+                    isSeparator: false
+                });
+
+                lastNkk = item.nkk;
+            });
+
+            // AutoTable PDF dengan baris kosong sebagai pemisah antar kelompok KK
+            doc.autoTable({
+                columns: pdfColumns,
+                body: formattedRows,
+                startY: 84,
+                margin: { left: 30, right: 30, top: 30, bottom: 40 },
+                styles: {
+                    fontSize: 6.8,
+                    cellPadding: 2.5,
+                    valign: 'middle',
+                    overflow: 'linebreak'
+                },
+                headStyles: {
+                    fillColor: [30, 41, 59], // Slate 800
+                    textColor: [255, 255, 255],
+                    fontStyle: 'bold',
+                    halign: 'center',
+                    fontSize: 7
+                },
+                columnStyles: {
+                    no: { halign: 'center', cellWidth: 18 },
+                    dpId: { cellWidth: 38 },
+                    nkk: { cellWidth: 72, fontStyle: 'bold' },
+                    nik: { cellWidth: 72 },
+                    nama: { cellWidth: 95, fontStyle: 'bold' },
+                    tempatLahir: { cellWidth: 55 },
+                    tglLahir: { halign: 'center', cellWidth: 48 },
+                    usia: { halign: 'center', cellWidth: 22 },
+                    stsKawin: { halign: 'center', cellWidth: 24 },
+                    lp: { halign: 'center', cellWidth: 16 },
+                    alamat: { cellWidth: 80 },
+                    rt: { halign: 'center', cellWidth: 24 },
+                    tps: { halign: 'center', cellWidth: 35 },
+                    ket: { halign: 'center', cellWidth: 70 }
+                },
+                alternateRowStyles: {
+                    fillColor: [248, 250, 252] // Slate 50
+                },
+                didParseCell: function (data) {
+                    if (data.section === 'body' && data.row.raw.isSeparator) {
+                        data.cell.styles.fillColor = [255, 255, 255]; // Latar putih untuk baris kosong
+                        data.cell.styles.lineWidth = 0; // Tanpa border untuk baris pemisah
+                        data.cell.styles.cellPadding = 2; // Menyesuaikan jarak tinggi baris kosong
+                    }
                 }
             });
 
-            return { uniqueList, duplicateList };
-        }
-
-        function exportExcel(type) {
-            toggleExportMenu();
-            let { uniqueList, duplicateList } = getSplitData();
-            let workbook = XLSX.utils.book_new();
-
-            if (type === 'all' || type === 'unique') {
-                let wsUnique = XLSX.utils.json_to_sheet(uniqueList);
-                XLSX.utils.book_append_sheet(workbook, wsUnique, "NKK Unik");
-            }
-            if (type === 'all' || type === 'duplicate') {
-                let wsDup = XLSX.utils.json_to_sheet(duplicateList);
-                XLSX.utils.book_append_sheet(workbook, wsDup, "NKK Duplikat");
-            }
-
-            let filename = type === 'unique' ? "Data_Kependudukan_NKK_Unik.xlsx" : 
-                           type === 'duplicate' ? "Data_Kependudukan_NKK_Duplikat.xlsx" : 
-                           "Data_Kependudukan_Lengkap_Pemisahan_NKK.xlsx";
-
-            XLSX.writeFile(workbook, filename);
-            showToast(`Berhasil mengunduh Excel (${type.toUpperCase()})!`);
-        }
-
-        function exportPDF(type) {
-            toggleExportMenu();
-            const { jsPDF } = window.jspdf;
-            let doc = new jsPDF('landscape', 'pt', 'a4');
-            let { uniqueList, duplicateList } = getSplitData();
-
-            if (type === 'all' || type === 'unique') {
-                doc.text("Laporan Data Kependudukan - Kategori NKK Unik", 40, 30);
-                let rowsUnique = uniqueList.map((i, idx) => [idx+1, i.dpId, i.nkk, i.nik, i.nama, i.tempatLahir, i.tglLahir, i.usia, i.stsKawin, i.lp, i.alamat, `RT ${i.rt}`, i.tps, `[${i.statusCode}] ${i.ket}`]);
-                doc.autoTable({
-                    head: [["NO", "DP-ID", "NKK", "NIK", "NAMA", "TMP LAHIR", "TGL LAHIR", "USIA", "STS KAWIN", "L/P", "ALAMAT", "RT", "TPS", "KET"]],
-                    body: rowsUnique,
-                    startY: 50,
-                    styles: { fontSize: 7 }
-                });
-                if (type === 'all') {
-                    doc.addPage();
-                }
+            // Menambahkan Footer Penomoran Halaman
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(7);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(100, 116, 139);
+                doc.text(
+                    `Halaman ${i} dari ${pageCount} | SIKAP DIGITAL - Laporan Kependudukan`,
+                    30,
+                    doc.internal.pageSize.height - 15
+                );
+                doc.text(
+                    `Dicetak otomatis dari Sistem SIKAP DIGITAL`,
+                    doc.internal.pageSize.width - 200,
+                    doc.internal.pageSize.height - 15
+                );
             }
 
-            if (type === 'all' || type === 'duplicate') {
-                let startYPos = type === 'all' ? 30 : 50;
-                doc.text("Laporan Data Kependudukan - Kategori NKK Duplikat", 40, 30);
-                let rowsDup = duplicateList.map((i, idx) => [idx+1, i.dpId, i.nkk, i.nik, i.nama, i.tempatLahir, i.tglLahir, i.usia, i.stsKawin, i.lp, i.alamat, `RT ${i.rt}`, i.tps, `[${i.statusCode}] ${i.ket}`]);
-                doc.autoTable({
-                    head: [["NO", "DP-ID", "NKK", "NIK", "NAMA", "TMP LAHIR", "TGL LAHIR", "USIA", "STS KAWIN", "L/P", "ALAMAT", "RT", "TPS", "KET"]],
-                    body: rowsDup,
-                    startY: startYPos,
-                    styles: { fontSize: 7 }
-                });
-            }
-
-            let filename = type === 'unique' ? "Data_Kependudukan_NKK_Unik.pdf" : 
-                           type === 'duplicate' ? "Data_Kependudukan_NKK_Duplikat.pdf" : 
-                           "Data_Kependudukan_Pemisahan_NKK.pdf";
-
-            doc.save(filename);
-            showToast(`Berhasil mengunduh PDF (${type.toUpperCase()})!`);
+            doc.save("Laporan_Kependudukan_Filtered.pdf");
+            showToast("Berhasil mengunduh PDF berdasarkan hasil filter!");
         }
 
         function showToast(msg) {
